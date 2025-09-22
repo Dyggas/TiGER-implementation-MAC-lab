@@ -39,3 +39,25 @@
 
 # debug information files
 *.dwo
+
+# Visual Studio solution and project files
+*.sln
+*.csproj
+*.filters
+*.vcxproj
+*.user
+
+# Executables
+*.exe
+*.out
+*.app
+
+#LaTeX
+*.aux
+*.log
+*.bcf
+*.out
+*.run.xml
+*.toc
+*.synctex.gz
+*.synctex(busy)
