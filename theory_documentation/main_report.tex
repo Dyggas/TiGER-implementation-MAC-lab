@@ -1,8 +1,10 @@
 \documentclass{report}
 \input{packages.tex}
 
+\addbibresource{references.bib}
+
 \begin{document}
-%\input{title.tex}
+\input{cover_page.tex}
 
 \makeatletter
 \renewcommand{\tableofcontents}{
@@ -11,7 +13,7 @@
   \begin{center}
           \bfseries\Large\MakeUppercase{Зміст}
   \end{center}
-  
+
   \addvspace{42pt}
   \@starttoc{toc}
 }
@@ -44,11 +46,11 @@
 \newtheorem{definition}{Означення}[section]
 \newtheorem{theorem}{Теорема}[section]
 \newtheorem{claim}{Твердження}[section]
+\newtheorem{lemma}{Лема}[section]
 
 \theoremstyle{definition}
 \newtheorem*{remark}{Зауваження:}
 \newtheorem*{example}{Приклад}
-\newtheorem{lemma}{Лема}[section] 
 
 \renewcommand*{\proofname}{Доведення:}
 
@@ -59,9 +61,9 @@
   \tikz[baseline={(textnode.base)}]{
     \draw[decorate, decoration={snake, segment length=0.35cm, amplitude=1.5pt}] % Left wave line
     (0,0) -- ++(0,1.5);
-    
+
     \node[anchor=base west, inner sep = 0.5pt] (textnode) at (0.15,0.75) {#1}; % Text node
-    
+
     \draw[decorate, decoration={snake, segment length=0.35cm, amplitude=1.5pt}] % Right wave line
     ([xshift=0.2cm, yshift=-0.75cm]textnode.east) -- ++(0,1.5);
   }
@@ -76,4 +78,9 @@
 
 \input{report.tex}
 
+\selectlanguage{english}
+\printbibliography
+
 \end{document}
+
+
