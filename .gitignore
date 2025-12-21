@@ -47,6 +47,9 @@
 *.vcxproj
 *.user
 
+# Visual Studio Code files
+.vscode/
+
 # Executables
 *.exe
 *.out
