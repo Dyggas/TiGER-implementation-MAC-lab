@@ -9,7 +9,7 @@ void shake256_hash(const uint8_t *in, std::size_t in_len,
 }
 
 void sha256_hash(const uint8_t *in, std::size_t in_len,
-                    uint8_t out[32]) {
+                    uint8_t *out) {
     FIPS202_SHA3_256(in, static_cast<unsigned int>(in_len), out);
 }
 
