@@ -6,7 +6,6 @@
 #include <vector>
 #include <cstddef>
 #include <cstdint>
-#include <cstring>
 #include <algorithm>
 
 namespace tiger {
