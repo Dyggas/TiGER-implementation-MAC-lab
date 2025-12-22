@@ -190,6 +190,9 @@ private:
     std::array<uint8_t, N> coeffs_{};
 };
 
+// ----------- Implementation -----------
+
+
 // Non-member functions
 template<std::size_t N>
 Polynomial<N> multiply_schoolbook(const Polynomial<N> &a, const Polynomial<N> &b) {
