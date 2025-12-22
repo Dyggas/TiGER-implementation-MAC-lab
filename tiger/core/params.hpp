@@ -35,7 +35,7 @@ enum class SecurityLevel {
 //  - hr: Hamming weight of ephemeral secret r
 //  - he: Hamming weight of error terms e1, e2
 //  - d: message length in bits (128, 192, or 256)
-//  - f: error correction capacity (3 or 5 bits)
+//  - f: error correction capacity for XEf (3 or 5 bits)
 //  - u_size: size of u for Fujisaki-Okamoto transform
 //  - pk_bytes, sk_bytes, ct_bytes: sizes in bytes of public key, secret key, ciphertext
 struct TiGERParams {
@@ -48,7 +48,7 @@ struct TiGERParams {
     std::size_t hr;     // Hamming weight of ephemeral r
     std::size_t he;     // Hamming weight of errors e1, e2
     std::size_t d;      // Message length in bits
-    unsigned    f;      // Error correction capacity (bits)
+    unsigned    f;      // Error correction capacity for XEf (bits)
     unsigned    u_size; // Size of u in secret key
 
     SecurityLevel level;
