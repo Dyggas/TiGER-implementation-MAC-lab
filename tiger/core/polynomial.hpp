@@ -1,6 +1,6 @@
 #pragma once
 
-#include "params.hpp"
+#include "params.cpp"
 
 #include <array>
 #include <vector>

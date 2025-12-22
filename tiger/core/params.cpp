@@ -1,3 +1,5 @@
+#pragma once
+
 #include "params.hpp"
 #include <stdexcept>
 #include <iostream>
