@@ -1,5 +1,5 @@
 #include "hash_functions.hpp"
-#include "compact_fips202.c"
+#include "compact_fips202.cpp"
 
 namespace tiger {
 
