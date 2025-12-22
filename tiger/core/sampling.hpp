@@ -17,7 +17,7 @@ namespace tiger {
 template<std::size_t N>
 Polynomial<N> sample_hwt(std::size_t hamming_weight, const uint8_t seed[32]);
 
-// Sample a sparse ternary polynomial with exact Hamming weight, returning a SparseTernary vector
+// Same thing, returning a SparseTernary vector
 template<std::size_t N>
 std::vector<SparseTernary> sample_hwt_sparse(std::size_t hamming_weight, 
                                               const uint8_t seed[32]);
@@ -33,11 +33,11 @@ void random_bytes(uint8_t *out, std::size_t len);
 template<std::size_t N>
 void random_bytes(std::array<uint8_t, N> &out);
 
-// Expand a seed into arbitrary-length randomness using SHAKE256
+// Expand a seed using SHAKE256
 void expand_seed(const uint8_t *seed, std::size_t seed_len,
                  uint8_t *out, std::size_t out_len);
 
-// Derive a new seed from an existing seed with a counter/nonce (w + Nonce)
+// Derive a new seed from an existing with a counter/nonce (w + Nonce)
 void derive_seed(const uint8_t base_seed[32], uint32_t counter,
                  uint8_t derived_seed[32]);
 
@@ -48,14 +48,13 @@ void derive_seed(const uint8_t base_seed[32], uint32_t counter,
 template<std::size_t N>
 std::vector<SparseTernary> sample_hwt_sparse(std::size_t hamming_weight,
                                               const uint8_t seed[32]) {
-    // Step 1: Expand seed to get enough random bytes
-    // Need: 2 bytes per position selection (Fisher-Yates)
-    //       + 1 bit per sign (but we'll use 1 byte for simplicity)
-    std::size_t needed_bytes = hamming_weight * 3; // conservative
+    // Expand seed to get enough random bytes
+    // Need 2 bytes per position selection + 1 bit per sign -> 3 bytes per term
+    std::size_t needed_bytes = hamming_weight * 3;
     std::vector<uint8_t> random_stream(needed_bytes);
     shake256_hash(seed, 32, random_stream.data(), needed_bytes);
     
-    // Step 2: Fisher-Yates shuffle to select hamming_weight unique positions
+    // Step 2: Fisher-Yates shuffle
     std::vector<std::size_t> positions(N);
     for (std::size_t i = 0; i < N; ++i) {
         positions[i] = i;
@@ -63,8 +62,6 @@ std::vector<SparseTernary> sample_hwt_sparse(std::size_t hamming_weight,
     
     std::size_t byte_idx = 0;
     for (std::size_t i = 0; i < hamming_weight; ++i) {
-        // Get random index in range [i, N-1]
-        // Use 2 bytes to avoid modulo bias for N=1024
         uint16_t rand_val = (static_cast<uint16_t>(random_stream[byte_idx]) << 8) |
                             static_cast<uint16_t>(random_stream[byte_idx + 1]);
         byte_idx += 2;
@@ -99,8 +96,7 @@ Polynomial<N> sample_hwt(std::size_t hamming_weight, const uint8_t seed[32]) {
 template<std::size_t N>
 Polynomial<N> sample_uniform(const uint8_t seed[32]) {
     Polynomial<N> result;
-    
-    // Expand seed to N bytes using SHAKE256
+
     shake256_hash(seed, 32, result.data(), N);
     
     return result;
