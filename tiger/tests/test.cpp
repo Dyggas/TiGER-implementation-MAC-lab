@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <cstring>
 
-#include "tiger/core/params.hpp"
-#include "tiger/core/polynomial.hpp"
+#include "../core/params.hpp"
+#include "../core/polynomial.hpp"
 
 using namespace tiger;
 
