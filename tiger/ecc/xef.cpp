@@ -190,12 +190,12 @@ inline size_t xef_encode(const uint8_t* msg, size_t msg_bytes, uint8_t* buffer, 
     return xef_compute(buffer, msg_bytes, f);
 }
 
-inline bool xef_decode(uint8_t* buffer, size_t msg_bytes, uint8_t* msg, int f) {
+inline size_t xef_decode(uint8_t* buffer, size_t msg_bytes, uint8_t* msg, int f) {
 
     // buffer contains 2*msg_bytes, but pass msg_bytes to both functions
 
     xef_compute(buffer, msg_bytes, f);
     size_t result_bits = xef_fixerr(buffer, msg_bytes, f);
     std::memcpy(msg, buffer, msg_bytes);
-    return result_bits > 0;
+    return result_bits;
 }
