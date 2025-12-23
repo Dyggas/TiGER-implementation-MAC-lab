@@ -7,7 +7,7 @@ namespace tiger {
 // Constants
 
 // Always uses q = 256
-inline constexpr unsigned TIGER_Q = 256u;
+inline constexpr unsigned TIGER_Q = 256;
 
 // Dimension values 
 inline constexpr std::size_t TIGER_N_128 = 512;
