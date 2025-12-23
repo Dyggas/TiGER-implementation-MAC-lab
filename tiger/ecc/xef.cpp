@@ -183,15 +183,16 @@ size_t xef_fixerr(void *block, size_t len, int f)
 
 // Wrappers
 
-inline size_t xef_encode(const uint8_t* msg, size_t msg_bytes,
-                         uint8_t* buffer, int f) {
+inline size_t xef_encode(const uint8_t* msg, size_t msg_bytes, uint8_t* buffer, int f) {
 
     std::memcpy(buffer, msg, msg_bytes);
+    // Pass msg_bytes (original size), buffer must be allocated as 2*msg_bytes
     return xef_compute(buffer, msg_bytes, f);
 }
 
-inline bool xef_decode(uint8_t* buffer, size_t msg_bytes,
-                       uint8_t* msg, int f) {
+inline bool xef_decode(uint8_t* buffer, size_t msg_bytes, uint8_t* msg, int f) {
+
+    // buffer contains 2*msg_bytes, but pass msg_bytes to both functions
 
     xef_compute(buffer, msg_bytes, f);
     size_t result_bits = xef_fixerr(buffer, msg_bytes, f);
