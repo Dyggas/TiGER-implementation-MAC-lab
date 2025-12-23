@@ -161,7 +161,7 @@ void test_hwt_polynomial() {
     
     // Test sparse conversion round-trip
     auto sparse = poly.to_sparse();
-    Poly512 poly2;
+    Polynomial<512> poly2;
     poly2.from_sparse(sparse);
     
     std::cout << (poly == poly2 ? "✓" : "✗") << " Sparse round-trip\n";
