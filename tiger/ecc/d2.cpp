@@ -6,9 +6,19 @@ namespace tiger {
 void d2_encode_bits_to_poly(const uint8_t* bits, size_t num_bits, 
                            Polynomial<512>& poly) {
     
+    for (size_t i = 0; i < 512; ++i) {
+        poly[i] = 0;
+    }
+
+    if (num_bits * 2 > 512) {
+        std::cerr << "D2 overflow: need " << (num_bits * 2) << " coeffs\n";
+        return;
+    }
+
     for (size_t i = 0; i < num_bits; i++) {
-        uint8_t byte = bits[i / 8];
-        uint8_t bit = (byte >> (i % 8)) & 1;
+        uint8_t byte_idx = i / 8;
+        uint8_t bit_idx = i % 8;
+        uint8_t bit = (bits[byte_idx] >> bit_idx) & 1;
         
         uint8_t value = bit ? 128 : 0;
         
@@ -20,12 +30,22 @@ void d2_encode_bits_to_poly(const uint8_t* bits, size_t num_bits,
 void d2_encode_bits_to_poly(const uint8_t* bits, size_t num_bits, 
                            Polynomial<1024>& poly) {
     
+    for (size_t i = 0; i < 1024; ++i) {
+        poly[i] = 0;
+    }
+
+    if (num_bits * 2 > 1024) {
+        std::cerr << "D2 overflow: need " << (num_bits * 2) << " coeffs\n";
+        return;
+    }
+
     for (size_t i = 0; i < num_bits; i++) {
-        uint8_t byte = bits[i / 8];
-        uint8_t bit = (byte >> (i % 8)) & 1;
+        uint8_t byte_idx = i / 8;
+        uint8_t bit_idx = i % 8;
+        uint8_t bit = (bits[byte_idx] >> bit_idx) & 1;
         
         uint8_t value = bit ? 128 : 0;
-
+        
         poly[2 * i] = value;
         poly[2 * i + 1] = value;
     }
