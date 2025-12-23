@@ -251,8 +251,4 @@ void constant_time_select(Polynomial<N> &r, const Polynomial<N> &t,
     }
 }
 
-// Aliases
-using Poly512  = Polynomial<512>;
-using Poly1024 = Polynomial<1024>;
-
 } // namespace tiger
