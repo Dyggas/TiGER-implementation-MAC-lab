@@ -1,8 +1,9 @@
+#pragma once
 #include "sampling.hpp"
 #include <cstring>
 #include <stdexcept>
 
-// Platform-specific includes for random bytes (voodoo magic)
+// Platform-specific includes for random bytes (voodoo magic (Linux untested :)))
 #ifdef _WIN32
     #include <windows.h>
     #include <bcrypt.h>
