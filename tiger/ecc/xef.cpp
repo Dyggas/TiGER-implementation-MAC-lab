@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include <cstring> // for memcpy, i know, string.h is the same thing, but my IDE yells at me
 
 // register lengths
 
@@ -177,4 +178,23 @@ size_t xef_fixerr(void *block, size_t len, int f)
 
     // return the true length
     return bit;
+}
+
+
+// Wrappers
+
+inline size_t xef_encode(const uint8_t* msg, size_t msg_bytes,
+                         uint8_t* buffer, int f) {
+
+    std::memcpy(buffer, msg, msg_bytes);
+    return xef_compute(buffer, msg_bytes, f);
+}
+
+inline bool xef_decode(uint8_t* buffer, size_t msg_bytes,
+                       uint8_t* msg, int f) {
+
+    xef_compute(buffer, msg_bytes, f);
+    size_t result_bits = xef_fixerr(buffer, msg_bytes, f);
+    std::memcpy(msg, buffer, msg_bytes);
+    return result_bits > 0;
 }

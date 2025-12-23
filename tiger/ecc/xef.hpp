@@ -21,7 +21,13 @@ size_t xef_compute(void *block, size_t len, int f);
 //  len = payload (bytes). Returns (payload | xef) length in *bits*.
 size_t xef_fixerr(void *block, size_t len, int f);
 
+// Wrappers
 
+inline size_t xef_encode(const uint8_t* msg, size_t msg_bytes,
+                         uint8_t* buffer, int f);
+
+inline bool xef_decode(uint8_t* buffer, size_t msg_bytes,
+                       uint8_t* msg, int f);
 // specific code from optimized implementations
 
 void xe2_53_compute(void *block);       // xe2_c16.c
