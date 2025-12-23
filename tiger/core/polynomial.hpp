@@ -180,6 +180,7 @@ public:
 
     bool operator!=(const Polynomial &o) const { return !(*this == o); }
 
+    // Went unused
     // Constant-time equality (to avoid timing attacks); just xor and or all differences
     bool ct_equal(const Polynomial &o) const {
         uint8_t d = 0;
@@ -233,6 +234,7 @@ Polynomial<N> multiply_sparse_ternary(const Polynomial<N> &d,
     return r;
 }
 
+// Went unused
 template<std::size_t N>
 bool constant_time_equal(const Polynomial<N> &a, const Polynomial<N> &b) {
     uint8_t d = 0;

@@ -93,6 +93,7 @@ Polynomial<N> sample_hwt(std::size_t hamming_weight, const uint8_t seed[32]) {
     return result;
 }
 
+// Uniform (SHAKE256)
 template<std::size_t N>
 Polynomial<N> sample_uniform(const uint8_t seed[32]) {
     Polynomial<N> result;
