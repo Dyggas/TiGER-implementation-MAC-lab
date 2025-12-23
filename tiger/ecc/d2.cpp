@@ -63,7 +63,8 @@ void d2_decode_poly_to_bits(const Polynomial<512>& poly,
         uint8_t c2 = poly[2 * i + 1];
         
         // Average: if sum >= 128, bit=1
-        uint8_t bit = ((c1 + c2) >= 128) ? 1 : 0;
+        uint16_t sum = static_cast<uint16_t>(c1) + static_cast<uint16_t>(c2);
+        uint8_t bit = ((sum) >= 128) ? 1 : 0;
         
         bits[i / 8] |= (bit << (i % 8));
     }
@@ -81,7 +82,8 @@ void d2_decode_poly_to_bits(const Polynomial<1024>& poly,
         uint8_t c2 = poly[2 * i + 1];
         
         // Average: if sum >= 128, bit=1
-        uint8_t bit = ((c1 + c2) >= 128) ? 1 : 0;
+        uint16_t sum = static_cast<uint16_t>(c1) + static_cast<uint16_t>(c2);
+        uint8_t bit = ((sum) >= 128) ? 1 : 0;
         
         bits[i / 8] |= (bit << (i % 8));
     }
