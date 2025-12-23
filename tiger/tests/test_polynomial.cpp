@@ -21,7 +21,7 @@ int main() {
     std::cout << "=== TiGER core tests ===\n";
 
     // 1. Basic construction and addition/subtraction
-    Poly512 a, b;
+    Polynomial<512> a, b;
     a[0] = 100;
     a[1] = 250;
     b[0] = 200;
@@ -47,7 +47,7 @@ int main() {
     // 3. Schoolbook multiplication with negacyclic reduction
     std::cout << "\n[3] Polynomial multiplication (schoolbook, negacyclic)\n";
 
-    Poly512 x, y;
+    Polynomial<512> x, y;
     x[0] = 1;   // 1
     x[1] = 1;   // X
     y[0] = 1;   // 1
@@ -60,7 +60,7 @@ int main() {
     print_poly(prod, "x * y", 4);
 
     // Negacyclic check: (X^{N-1} + 1) * X = X^N + X = -1 + X = 255 + X
-    Poly512 u, v;
+    Polynomial<512> u, v;
     u[0]           = 1;  // 1
     u[TIGER_N_128 - 1] = 1;  // X^{N-1}
     v[1]           = 1;  // X
@@ -73,7 +73,7 @@ int main() {
     // 4. Sparse ternary multiplication
     std::cout << "\n[4] Sparse ternary multiplication\n";
 
-    Poly512 dense;
+    Polynomial<512> dense;
     dense[0] = 5;   // 5
     dense[1] = 10;  // 10X
 
@@ -95,7 +95,7 @@ int main() {
     // 5. Scale and round (RLWR)
     std::cout << "\n[5] Scale and round\n";
 
-    Poly512 r;
+    Polynomial<512> r;
     r[0] = 128; // q/2
     r[1] = 200;
 
@@ -115,7 +115,7 @@ int main() {
     uint8_t buffer_raw[512]{};
     a.serialize(buffer_raw);
 
-    Poly512 a_deser;
+    Polynomial<512> a_deser;
     a_deser.deserialize(buffer_raw);
     std::cout << "a == a_deser? " << (a == a_deser ? "yes" : "no") << "\n";
 
@@ -128,7 +128,7 @@ int main() {
     // a is still 100 + 250X + ...
     a.compress(buffer_comp, LOG_MOD);
 
-    Poly512 a_decomp;
+    Polynomial<512> a_decomp;
     a_decomp.decompress(buffer_comp, LOG_MOD);
     a_decomp.serialize(buffer_decomp_raw);
 
@@ -145,7 +145,7 @@ int main() {
     std::cout << "\n[7] Sparse convert + constant-time equality\n";
 
     // Make a sparse polynomial p with some ±1 entries
-    Poly512 p;
+    Polynomial<512> p;
     p[0] = 1;
     p[5] = 255;  // -1 mod 256
     p[10] = 1;
@@ -156,7 +156,7 @@ int main() {
         std::cout << "  index=" << t.index << ", sign=" << int(t.sign) << "\n";
     }
 
-    Poly512 p_recovered;
+    Polynomial<512> p_recovered;
     p_recovered.from_sparse(sparse_repr);
 
     std::cout << "p == p_recovered? " << (p == p_recovered ? "yes" : "no") << "\n";
@@ -164,7 +164,7 @@ int main() {
               << (p.ct_equal(p_recovered) ? "yes" : "no") << "\n";
 
     // Check that ct_equal distinguishes differences
-    Poly512 p_modified = p;
+    Polynomial<512> p_modified = p;
     p_modified[0] ^= 1; // flip a bit
 
     std::cout << "ct_equal(p, p_modified)? "
