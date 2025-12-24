@@ -21,10 +21,12 @@ void pke_keygen(const TiGERParams& params,
     
     // 4: s <- HWT_n(hs, Seed_s)
     sk.s = sample_hwt<N>(params.hs, seed_s);
+    sk.s.print(std::cout, 32, "Generated secret key s: ", true);
     
     // 5: b <- round((p/q) · a*s)
     auto a_times_s = a.multiply_sparse(sk.s.to_sparse());  // sparse mult
     pk.b = a_times_s.scale_round(params.p, params.q);
+    pk.b.print(std::cout, 32, "Generated public key polynomial b: ", true);
     
     // Store seed_a in pk
     std::memcpy(pk.seed_a.data(), seed_a, 32);
@@ -61,9 +63,9 @@ void pke_encrypt(const TiGERParams& params,
     auto a_times_r = a.multiply_sparse(r.to_sparse());
     auto ar_plus_e1 = a_times_r + e1;
 
-    // Polynomial<N> c1_try = ar_plus_e1.scale_round(params.k1, params.q); 
-    // c1_try = c1_try.scale_round(params.q, params.k1); 
-    // c1_try.print(std::cout, 32, "Computed c1: ", true);
+    Polynomial<N> c1_try = ar_plus_e1.scale_round(params.k1, params.q); 
+    c1_try = c1_try.scale_round(params.q, params.k1); 
+    c1_try.print(std::cout, 32, "Computed c1: ", true);
 
     Polynomial<N> c1 = ar_plus_e1;
     
@@ -76,6 +78,7 @@ void pke_encrypt(const TiGERParams& params,
     Polynomial<N> encoded_msg;
     d2_encode_bits_to_poly(xef_codeword.data(), params.d * 2, encoded_msg);
     
+    encoded_msg.print(std::cout, 32, "Encoded message polynomial: ", false);
     // Step 7.3: Scale by q/2 - already done in d2 encoding
     // encoded_msg = encoded_msg.scale(params.q / 2);
     
@@ -90,6 +93,7 @@ void pke_encrypt(const TiGERParams& params,
     auto sum = encoded_msg + b_times_r + e2;
     // Polynomial<N> c2 = sum.scale_round(params.k2, params.q);
     Polynomial<N> c2 = sum;
+    c2.print(std::cout, 32, "Computed c2: ", true);
 
     // 8: Serialize ct = (c1 || c2)
     ct.resize(params.ct_bytes);
@@ -115,9 +119,13 @@ void pke_decrypt(const TiGERParams& params,
 
     Polynomial<N>& c1_full = c1;
     Polynomial<N>& c2_full = c2;
+    c1_full.print(std::cout, 32, "Decryption c1 full: ", true);
+    c2_full.print(std::cout, 32, "Decryption c2 full: ", true);
     
     Polynomial<N> c1s = c1_full.multiply_sparse(sk.s.to_sparse());
     Polynomial<N> diff = c2_full - c1s;
+    diff.print(std::cout, 32, "Diff: ", false);
+    diff.print(std::cout, 32, "Diff_hex: ", true);
     
     // Nice scaling I have there. It would be a shame if I had already done it in d2 encoding.
     // A real shame. Would have lost me many hours. ...
@@ -125,15 +133,25 @@ void pke_decrypt(const TiGERParams& params,
     // recovered = diff.scale_round(2, params.q);
     // THIS is the missing spec step: round((2/q)*diff)
     Polynomial<N> recovered = diff.scale_round(2, params.q);
+    recovered.print(std::cout, 32, "Recovered polynomial before D2 decode: ", false);
 
     // Convert {0,1} -> {0,128} for your D2 decoder
     recovered = recovered.scale(params.q / 2);
+    recovered.print(std::cout, 32, "Recovered polynomial after scaling for D2 decode: ", false);
     
     // 3: M <- eccDEC(M')
     std::vector<uint8_t> xef_codeword(params.d * 2 / 8);
     d2_decode_poly_to_bits(recovered, xef_codeword.data(), params.d * 2);
+    std::cout << " xef_codeword:  ";
+    for (std::size_t i = 0; i < 32; ++i) {
+        std::cout << int(xef_codeword[i]) << ", ";
+    }
     
     xef_decode(xef_codeword.data(), params.d / 8, msg, params.f);
+    std::cout << "msg:  ";
+    for (std::size_t i = 0; i < 32; ++i) {
+        std::cout << int(msg[i]) << ", ";
+    }
 }
 
 // Explicit template instantiations
