@@ -198,16 +198,16 @@ private:
 // Non-member functions
 template<std::size_t N>
 Polynomial<N> multiply_schoolbook(const Polynomial<N> &a, const Polynomial<N> &b) {
-    std::array<int16_t, 2 * N> t{};
+    std::array<int32_t, 2 * N> t{};
     for (std::size_t i = 0; i < N; ++i) {
-        int16_t ai = static_cast<int16_t>(a[i]);
+        int32_t ai = static_cast<int32_t>(a[i]);
         for (std::size_t j = 0; j < N; ++j) {
-            t[i + j] += static_cast<int16_t>(b[j]) * ai;
+            t[i + j] += static_cast<int32_t>(b[j]) * ai;
         }
     }
     Polynomial<N> r;
     for (std::size_t i = 0; i < N; ++i) {
-        int16_t v = t[i] - t[i + N];
+        int32_t v = t[i] - t[i + N];
         r[i] = static_cast<uint8_t>(v & 0xFF);
     }
     return r;
@@ -216,12 +216,12 @@ Polynomial<N> multiply_schoolbook(const Polynomial<N> &a, const Polynomial<N> &b
 template<std::size_t N>
 Polynomial<N> multiply_sparse_ternary(const Polynomial<N> &d,
                                       const std::vector<SparseTernary> &s) {
-    std::array<int16_t, N> acc{};
+    std::array<int32_t, N> acc{};
     for (const auto &t : s) {
-        int16_t sign = static_cast<int16_t>(t.sign);
+        int32_t sign = static_cast<int32_t>(t.sign);
         for (std::size_t i = 0; i < N; ++i) {
             std::size_t pos = i + t.index;
-            int16_t val = static_cast<int16_t>(d[i]) * sign;
+            int32_t val = static_cast<int32_t>(d[i]) * sign;
             if (pos >= N) {
                 pos -= N;
                 val = -val;
