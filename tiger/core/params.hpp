@@ -88,24 +88,24 @@ struct TiGERParams {
 // Predefined Parameter Sets
 
 inline constexpr TiGERParams TIGER128_PARAMS(
-    512, 256, 128, 64, 64, 
+    512, 256, 128, 128, 128, 
     160, 128, 32, 128, 3, 16,
     SecurityLevel::TIGER128, 
-    480, 528, 768 
+    480, 528, 1024 
 );
 
 inline constexpr TiGERParams TIGER192_PARAMS(
-    1024, 256, 64, 64, 4,
-    84, 84, 84, 256, 5, 32,
+    1024, 256, 128, 128, 128,
+    84, 84, 32, 256, 5, 32,
     SecurityLevel::TIGER192,
-    800, 1056, 1024
+    928, 1056, 1792
 );
 
 inline constexpr TiGERParams TIGER256_PARAMS(
-    1024, 256, 128, 128, 4,
+    1024, 256, 128, 128, 128,
     198, 198, 32, 256, 5, 32,
     SecurityLevel::TIGER256,
-    928, 1056, 1152
+    928, 1056, 1792
 );
 
 
