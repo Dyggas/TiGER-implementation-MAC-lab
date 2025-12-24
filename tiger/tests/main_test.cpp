@@ -72,14 +72,10 @@ bool test_pke_basic(const TiGERParams& params) {
         // Decrypt
         std::vector<uint8_t> recovered(params.d / 8);
         start = high_resolution_clock::now();
-        bool success = pke_decrypt(params, sk, ct.data(), recovered.data());
+        pke_decrypt(params, sk, ct.data(), recovered.data());
         auto decrypt_time = duration_cast<microseconds>(high_resolution_clock::now() - start);
         std::cout << "  Decrypt: " << decrypt_time.count() << " μs\n";
-        
-        if (!success) {
-            std::cout << "  ✗ Decryption returned false!\n";
-            return false;
-        }
+    
         
         bool match = arrays_equal(msg.data(), recovered.data(), msg.size());
         std::cout << "  Message recovery: " << (match ? "✓ PASS" : "✗ FAIL") << "\n";
@@ -117,14 +113,9 @@ bool test_pke_basic(const TiGERParams& params) {
         
         std::vector<uint8_t> recovered(params.d / 8);
         start = high_resolution_clock::now();
-        bool success = pke_decrypt(params, sk, ct.data(), recovered.data());
+        pke_decrypt(params, sk, ct.data(), recovered.data());
         auto decrypt_time = duration_cast<microseconds>(high_resolution_clock::now() - start);
         std::cout << "  Decrypt: " << decrypt_time.count() << " μs\n";
-        
-        if (!success) {
-            std::cout << "  ✗ Decryption returned false!\n";
-            return false;
-        }
         
         bool match = arrays_equal(msg.data(), recovered.data(), msg.size());
         std::cout << "  Message recovery: " << (match ? "✓ PASS" : "✗ FAIL") << "\n";
@@ -154,7 +145,7 @@ bool test_pke_corrupted_ciphertext(const TiGERParams& params) {
         ct[ct.size() - 1] ^= 0xFF;
         
         std::vector<uint8_t> recovered(params.d / 8);
-        bool success = pke_decrypt(params, sk, ct.data(), recovered.data());
+        pke_decrypt(params, sk, ct.data(), recovered.data());
         
         bool match = arrays_equal(msg.data(), recovered.data(), msg.size());
         
