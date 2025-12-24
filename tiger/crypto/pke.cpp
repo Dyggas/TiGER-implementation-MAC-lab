@@ -58,7 +58,8 @@ void pke_encrypt(const TiGERParams& params,
     // 6: c1 <- round((k1/q) · (a*r + e1))
     auto a_times_r = a.multiply_sparse(r.to_sparse());
     auto ar_plus_e1 = a_times_r + e1;
-    Polynomial<N> c1 = ar_plus_e1.scale_round(params.k1, params.q); 
+    // Polynomial<N> c1 = ar_plus_e1.scale_round(params.k1, params.q); 
+    Polynomial<N> c1 = ar_plus_e1;
     
     // 7: c2 <- round((k2/q) · ((q/2)·eccENC(msg) + ((q/p)·b)*r + e2))
     // Step 7.1: eccENC(msg)
@@ -73,15 +74,16 @@ void pke_encrypt(const TiGERParams& params,
     // encoded_msg = encoded_msg.scale(params.q / 2);
     
     // Step 7.4: ((q/p)·b)*r
-    auto b_times_r = pk.b.multiply_sparse(r.to_sparse());  
-    auto scaled_br = b_times_r.scale(params.q / params.p); 
+    auto scaled_br = pk.b.scale(params.q / params.p); 
+    auto b_times_r = scaled_br.multiply_sparse(r.to_sparse());  
 
 
     
     
     // Step 7.5: Sum + e2
     auto sum = encoded_msg + b_times_r + e2;
-    Polynomial<N> c2 = sum.scale_round(params.k2, params.q);
+    // Polynomial<N> c2 = sum.scale_round(params.k2, params.q);
+    Polynomial<N> c2 = sum;
 
     // 8: Serialize ct = (c1 || c2)
     ct.resize(params.ct_bytes);
@@ -91,7 +93,7 @@ void pke_encrypt(const TiGERParams& params,
 // Decryption
 
 template<std::size_t N>
-bool pke_decrypt(const TiGERParams& params,
+void pke_decrypt(const TiGERParams& params,
                  const PKESecretKey<N>& sk,
                  const uint8_t* ct_data,
                  uint8_t* msg) {
@@ -102,8 +104,11 @@ bool pke_decrypt(const TiGERParams& params,
     // 1: Parse c = (c1 || c2)
 
     // 2: M' <- round((2/q) · ((q/k2)·c2 − ((q/k1)·c1)*s))
-    Polynomial<N> c1_full = c1.scale_round(params.q, params.k1);
-    Polynomial<N> c2_full = c2.scale_round(params.q, params.k2);
+    // Polynomial<N> c1_full = c1.scale_round(params.q, params.k1);
+    // Polynomial<N> c2_full = c2.scale_round(params.q, params.k2);
+
+    Polynomial<N>& c1_full = c1;
+    Polynomial<N>& c2_full = c2;
     
     Polynomial<N> c1s = c1_full.multiply_sparse(sk.s.to_sparse());
     Polynomial<N> diff = c2_full - c1s;
@@ -112,13 +117,17 @@ bool pke_decrypt(const TiGERParams& params,
     // A real shame. Would have lost me many hours. ...
     // Polynomial<N> recovered;
     // recovered = diff.scale_round(2, params.q);
+    // THIS is the missing spec step: round((2/q)*diff)
+    Polynomial<N> recovered = diff.scale_round(2, params.q);
+
+    // Convert {0,1} -> {0,128} for your D2 decoder
+    recovered = recovered.scale(params.q / 2);
     
     // 3: M <- eccDEC(M')
     std::vector<uint8_t> xef_codeword(params.d * 2 / 8);
     d2_decode_poly_to_bits(diff, xef_codeword.data(), params.d * 2);
     
-    bool success = xef_decode(xef_codeword.data(), params.d / 8, msg, params.f);
-    return success;
+    xef_decode(xef_codeword.data(), params.d / 8, msg, params.f);
 }
 
 // Explicit template instantiations
@@ -131,9 +140,9 @@ template void pke_encrypt<512>(const TiGERParams&, const PKEPublicKey<512>&,
 template void pke_encrypt<1024>(const TiGERParams&, const PKEPublicKey<1024>&, 
                                 const uint8_t*, const uint8_t[32], std::vector<uint8_t>&);
 
-template bool pke_decrypt<512>(const TiGERParams&, const PKESecretKey<512>&, 
+template void pke_decrypt<512>(const TiGERParams&, const PKESecretKey<512>&, 
                                const uint8_t*, uint8_t*);
-template bool pke_decrypt<1024>(const TiGERParams&, const PKESecretKey<1024>&, 
+template void pke_decrypt<1024>(const TiGERParams&, const PKESecretKey<1024>&, 
                                 const uint8_t*, uint8_t*);
 
 } // namespace tiger

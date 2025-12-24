@@ -45,7 +45,7 @@ void pke_encrypt(const TiGERParams& params,
 
 // Decryption
 template<std::size_t N>
-bool pke_decrypt(const TiGERParams& params,
+void pke_decrypt(const TiGERParams& params,
                  const PKESecretKey<N>& sk,
                  const uint8_t* ct,      // serialized ciphertext
                  uint8_t* msg);          // recovered message (d bits)
