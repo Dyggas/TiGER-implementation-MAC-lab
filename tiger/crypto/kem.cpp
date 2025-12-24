@@ -132,7 +132,7 @@ void kem_decaps(const TiGERParams& params,
         pk.b = b;
         
         uint8_t delta_hat[32];
-        bool decrypt_ok = pke_decrypt(params, sk, ct_serialized.data(), delta_hat);
+        pke_decrypt(params, sk, ct_serialized.data(), delta_hat);
         
         uint8_t h_delta_hat[32];
         sha256_hash(delta_hat, params.d / 8, h_delta_hat);
@@ -170,7 +170,7 @@ void kem_decaps(const TiGERParams& params,
         pk.b = b;
         
         uint8_t delta_hat[32];
-        bool decrypt_ok = pke_decrypt(params, sk, ct_serialized.data(), delta_hat);
+        pke_decrypt(params, sk, ct_serialized.data(), delta_hat);
         
         uint8_t h_delta_hat[32];
         sha256_hash(delta_hat, params.d / 8, h_delta_hat);
