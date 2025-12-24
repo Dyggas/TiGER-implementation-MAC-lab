@@ -110,28 +110,35 @@ public:
     void deserialize(const uint8_t *in) { std::memcpy(coeffs_.data(), in, N); }
 
     // Compression (bit packing)
-    void compress(uint8_t *out, uint8_t log_mod) const {
+    void compress(uint8_t* out, uint8_t log_mod) const {
         if (log_mod == 8) {
             std::memcpy(out, coeffs_.data(), N);
             return;
         }
+
         const uint8_t shift = 8u - log_mod;
+        const uint16_t half = static_cast<uint16_t>(1u) << (shift - 1); // 2^(shift-1)
+        const uint8_t mask = static_cast<uint8_t>((1u << log_mod) - 1u);
+
         uint32_t buf = 0, bits = 0;
         std::size_t oidx = 0;
 
-        // Sliding byte-sized window + packing log_mod bits at a time
         for (std::size_t i = 0; i < N; ++i) {
-            uint8_t c = (coeffs_[i] >> shift); // Keep the top log_mod bits
+            // round-to-nearest before downscaling
+            uint16_t x = static_cast<uint16_t>(coeffs_[i]);
+            uint8_t c = static_cast<uint8_t>(((x + half) >> shift) & mask);
+
             buf |= (static_cast<uint32_t>(c) << bits);
             bits += log_mod;
-            // Flush bytes when we have enough
+
             while (bits >= 8) {
                 out[oidx++] = static_cast<uint8_t>(buf & 0xFFu);
-                buf >>= 8; // Remove flushed byte
+                buf >>= 8;
                 bits -= 8;
             }
         }
-        if (bits) out[oidx] = static_cast<uint8_t>(buf & 0xFFu); 
+
+        if (bits) out[oidx] = static_cast<uint8_t>(buf & 0xFFu);
     }
 
     // Decompression (bit unpacking) :)
@@ -186,6 +193,32 @@ public:
         uint8_t d = 0;
         for (std::size_t i = 0; i < N; ++i) d |= (coeffs_[i] ^ o[i]);
         return d == 0;
+    }
+
+    void print(std::ostream& os,
+               std::size_t terms = N,
+               const char* label = nullptr,
+               bool hex = true) const
+    {
+        if (label) os << label;
+
+        const std::size_t m = std::min<std::size_t>(terms, N);
+        os << "[";
+
+        for (std::size_t i = 0; i < m; ++i) {
+            if (i) os << ", ";
+
+            if (hex) {
+                os << "0x" << std::hex << std::setw(2) << std::setfill('0')
+                   << static_cast<unsigned>(coeffs_[i])
+                   << std::dec;
+            } else {
+                os << static_cast<unsigned>(coeffs_[i]);
+            }
+        }
+
+        if (m < N) os << ", ...";
+        os << "]\n";
     }
 
 private:
