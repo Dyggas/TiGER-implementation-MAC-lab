@@ -9,7 +9,7 @@ The implementation is written in C++ and includes polynomial arithmetic in $R_q 
 Implements TiGER parameter structs and predefined parameter sets for TiGER128/TiGER192/TiGER256 (n, q, p, k1, k2, hs, hr, he, d, f, sizes) in `tiger/core/params.hpp`
 
 ### Polynomial ring arithmetic
-Polynomial coefficients are stored as bytes `uint8_t` (implicit $mod\; 256$ arithmetic). 
+Polynomial coefficients are stored as bytes `uint8_t` (implicit $mod 256$ arithmetic). 
 Supports addition/subtraction, negation, scalar multiply, schoolbook multiply, and sparse ternary multiply optimized via sparse index/sign representation.
 
 ### Sampling
